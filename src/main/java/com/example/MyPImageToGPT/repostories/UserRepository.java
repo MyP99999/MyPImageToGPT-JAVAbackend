@@ -1,4 +1,4 @@
-package com.example.MyPImageToGPT.user;
+package com.example.MyPImageToGPT.repostories;
 
 import com.example.MyPImageToGPT.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
