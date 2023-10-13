@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin("http://localhost:3000")
 public class AuthenticationController {
 
     private final AuthenticationService service;

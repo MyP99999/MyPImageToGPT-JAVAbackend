@@ -7,10 +7,7 @@ import com.example.MyPImageToGPT.dto.ChatGptResponse;
 import com.example.MyPImageToGPT.services.HistoryService;
 import com.example.MyPImageToGPT.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -18,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/bot")
+@CrossOrigin("http://localhost:3000")
 public class CustomBotController {
 
     @Value("${openai.model}")
