@@ -1,5 +1,6 @@
 package com.example.MyPImageToGPT.user;
 
+import com.example.MyPImageToGPT.Entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +33,7 @@ public class UserDetailImp implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
         // Assuming you have a way to get the role's name by its id,
         // here's a simplified example:
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole_id()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
 
         return new UserDetailImp(
                 user.getId(),

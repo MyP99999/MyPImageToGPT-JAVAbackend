@@ -1,6 +1,6 @@
 package com.example.MyPImageToGPT.services;
 
-import com.example.MyPImageToGPT.user.User;
+import com.example.MyPImageToGPT.Entities.User;
 import com.example.MyPImageToGPT.repostories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -19,7 +19,4 @@ public class Role {
 
     private String name; // Name of the role, e.g., "ADMIN", "USER", etc.
 
-    //... other fields if needed
-
-    //... constructors, getters, setters, etc. (Lombok annotations above should take care of these)
 }

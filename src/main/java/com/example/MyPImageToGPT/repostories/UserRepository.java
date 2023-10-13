@@ -1,6 +1,6 @@
 package com.example.MyPImageToGPT.repostories;
 
-import com.example.MyPImageToGPT.user.User;
+import com.example.MyPImageToGPT.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

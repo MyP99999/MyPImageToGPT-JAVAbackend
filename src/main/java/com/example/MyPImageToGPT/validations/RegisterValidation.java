@@ -2,7 +2,7 @@ package com.example.MyPImageToGPT.validations;
 
 import com.example.MyPImageToGPT.auth.RegisterRequest;
 import com.example.MyPImageToGPT.services.UserService;
-import com.example.MyPImageToGPT.user.User;
+import com.example.MyPImageToGPT.Entities.User;
 import com.example.MyPImageToGPT.utils.LogAndResponseUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -2,6 +2,7 @@ package com.example.MyPImageToGPT.services;
 
 import com.example.MyPImageToGPT.Entities.Role;
 import com.example.MyPImageToGPT.repostories.RoleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,8 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
-    public Optional<Role> findById(Integer id) {
+    public Optional<Role> findRoleById(Integer id) {
         return roleRepository.findById(id);
     }
 
-    //... add other service methods as needed (like save, delete for roles)
 }

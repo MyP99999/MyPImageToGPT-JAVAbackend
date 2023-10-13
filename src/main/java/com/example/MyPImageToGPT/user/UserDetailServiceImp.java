@@ -1,5 +1,6 @@
 package com.example.MyPImageToGPT.user;
 
+import com.example.MyPImageToGPT.Entities.User;
 import com.example.MyPImageToGPT.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

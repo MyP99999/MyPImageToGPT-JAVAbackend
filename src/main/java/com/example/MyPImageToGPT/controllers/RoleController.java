@@ -23,10 +23,11 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Role> findById(@PathVariable Integer id) {
-        return roleService.findById(id)
-                .map(role -> ResponseEntity.ok(role))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return roleService.findRoleById(id)
+                .map(role -> ResponseEntity.ok(role)) // if role is present, return it with 200 OK status
+                .orElseGet(() -> ResponseEntity.notFound().build()); // if role is not present, return 404 Not Found
     }
+
 
     //... add other endpoints as needed (like create, update, delete for roles)
 }

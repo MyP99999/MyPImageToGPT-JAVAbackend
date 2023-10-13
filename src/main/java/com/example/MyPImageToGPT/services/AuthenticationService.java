@@ -1,10 +1,11 @@
 package com.example.MyPImageToGPT.services;
 
+import com.example.MyPImageToGPT.Entities.Role;
 import com.example.MyPImageToGPT.auth.AuthenticationRequest;
 import com.example.MyPImageToGPT.auth.AuthenticationResponse;
 import com.example.MyPImageToGPT.auth.RegisterRequest;
 import com.example.MyPImageToGPT.jwt.JwtService;
-import com.example.MyPImageToGPT.user.User;
+import com.example.MyPImageToGPT.Entities.User;
 import com.example.MyPImageToGPT.user.UserDetailServiceImp;
 import com.example.MyPImageToGPT.validations.RegisterValidation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -23,6 +26,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailServiceImp userDetailServiceImp;
+    private final RoleService roleService;  // Add this
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -43,7 +48,8 @@ public class AuthenticationService {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         newUser.setPassword(encodedPassword);
 
-        newUser.setRole_id(1);
+        Optional<Role> userRole = roleService.findRoleById(1);
+        userRole.ifPresent(newUser::setRole); // Ensure this setter exists in your User entity
 
         // Save the new user to the database
         userService.save(newUser);
