@@ -1,5 +1,6 @@
 package com.example.MyPImageToGPT.jwt;
 
+import com.example.MyPImageToGPT.user.UserDetailImp;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
@@ -20,6 +21,15 @@ public class JwtService {
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
+
+    public Integer extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("id", Integer.class));
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -29,8 +39,15 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public  String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        if (userDetails instanceof UserDetailImp) {
+            UserDetailImp user = (UserDetailImp) userDetails;
+            claims.put("id", user.getId());
+            claims.put("email", user.getEmail());
+        }
+        // Pass the entire userDetails object, not just the username
+        return generateToken(claims, userDetails);
     }
 
     public String generateToken(

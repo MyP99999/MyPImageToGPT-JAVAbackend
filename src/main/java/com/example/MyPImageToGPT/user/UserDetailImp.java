@@ -92,4 +92,12 @@ public class UserDetailImp implements UserDetails {
         UserDetailImp other = (UserDetailImp) obj;
         return Objects.equals(id, other.id);
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
