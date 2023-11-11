@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class UserDetailImp implements UserDetails {
 
@@ -33,7 +34,8 @@ public class UserDetailImp implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
         // Assuming you have a way to get the role's name by its id,
         // here's a simplified example:
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        String roleName = user.getRole().getName(); // Assuming getRole() returns a Role object and getName() returns the role name
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
 
         return new UserDetailImp(
                 user.getId(),
@@ -43,7 +45,12 @@ public class UserDetailImp implements UserDetails {
                 authorities
         );
     }
-
+    public String getRole() {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(auth -> auth.substring(auth.indexOf('_') + 1)) // Extract role name after "ROLE_"
+                .collect(Collectors.joining(","));
+    }
     // Implement getters for id and email
 
     @Override

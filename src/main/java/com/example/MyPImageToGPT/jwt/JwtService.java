@@ -45,6 +45,7 @@ public class JwtService {
             UserDetailImp user = (UserDetailImp) userDetails;
             claims.put("id", user.getId());
             claims.put("email", user.getEmail());
+            claims.put("role", user.getRole()); // Add role to the claims
         }
         // Pass the entire userDetails object, not just the username
         return generateToken(claims, userDetails);

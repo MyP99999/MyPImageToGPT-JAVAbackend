@@ -1,6 +1,7 @@
 package com.example.MyPImageToGPT.controllers;
 
 import com.example.MyPImageToGPT.auth.AuthenticationRequest;
+import com.example.MyPImageToGPT.auth.AuthenticationResponse;
 import com.example.MyPImageToGPT.auth.RegisterRequest;
 import com.example.MyPImageToGPT.responses.MessageResponse;
 import com.example.MyPImageToGPT.services.AuthenticationService;
@@ -50,7 +51,7 @@ public class AuthenticationController {
                 // Invalid username or password
                 return ResponseEntity
                         .badRequest()
-                        .body(new MessageResponse("Error: Invalid username or password!"));
+                        .body(new MessageResponse("Error: Invalid email or password!"));
 
             } else {
                 // Generic authentication failure
@@ -62,4 +63,17 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(service.authenticate(request));
     }
+    @PostMapping("/google")
+    public ResponseEntity<?> authenticateWithGoogle(@RequestParam("code") String code) {
+        try {
+            AuthenticationResponse response = service.authenticateWithGoogle(code);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Handle exceptions (like failed token exchange, user creation, etc.)
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error during Google authentication: " + e.getMessage());
+        }
+    }
+
 }

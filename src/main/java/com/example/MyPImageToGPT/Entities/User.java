@@ -24,8 +24,11 @@ public class User {
     private String email;
     private String password;
 
+    @Column(name = "is_external_auth")
+    private boolean isExternalAuth;
+
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

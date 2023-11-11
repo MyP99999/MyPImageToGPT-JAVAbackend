@@ -1,7 +1,7 @@
 package com.example.MyPImageToGPT.user;
 
 import com.example.MyPImageToGPT.Entities.User;
-import com.example.MyPImageToGPT.services.UserService;
+import com.example.MyPImageToGPT.repostories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,14 +13,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailServiceImp implements UserDetailsService {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> createNewUser(email));
 
         return UserDetailImp.build(user);
+    }
+
+    private User createNewUser(String email) {
+        // Create a new user entity and set its properties
+        User newUser = new User();
+        newUser.setEmail(email);
+        // Set other properties based on OAuth2 details (if available)
+
+        // Save the new user in the database
+        return userRepository.save(newUser);
     }
 }
