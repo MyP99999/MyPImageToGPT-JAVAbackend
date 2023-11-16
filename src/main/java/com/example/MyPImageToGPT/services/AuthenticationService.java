@@ -74,15 +74,19 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails userDetails = userDetailServiceImp.loadUserByUsername(request.getUsername());
         String jwtToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     public AuthenticationResponse authenticateWithGoogle(String code) {
         String accessToken = exchangeCodeForAccessToken(code);
         GoogleUser googleUser = fetchGoogleUserDetails(accessToken);
 
-        User user = userService.findOrCreateUser(googleUser.getEmail(),googleUser.getEmail().split("@")[0],googleUser.isExternalAuth());
+        User user = userService.findOrCreateUser(googleUser.getEmail(),googleUser.getEmail().split("@")[0],googleUser.isExternalAuth(), googleUser.getTokens());
 
         UserDetails userDetails = userDetailServiceImp.loadUserByUsername(user.getEmail());
 
@@ -129,6 +133,17 @@ public class AuthenticationService {
         private Integer id;
         private String email;
         private String username;
+
+        private Integer tokens;
+
+        public Integer getTokens() {
+            return tokens;
+        }
+
+        public void setTokens(Integer tokens) {
+            this.tokens = tokens;
+        }
+
         private boolean isExternalAuth;
 
         public boolean isExternalAuth() {

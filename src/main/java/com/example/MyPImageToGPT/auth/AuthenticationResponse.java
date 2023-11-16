@@ -13,8 +13,17 @@ public class AuthenticationResponse {
 
     private String token;
     private String error;
+    private String refreshToken; // add this field
+
 
     public static AuthenticationResponse error(String error) {
         return AuthenticationResponse.builder().error(error).build();
+    }
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

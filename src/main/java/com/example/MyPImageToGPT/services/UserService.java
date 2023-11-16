@@ -59,7 +59,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User findOrCreateUser(String email, String username, Boolean isExternalAuth) {
+    public User findOrCreateUser(String email, String username, Boolean isExternalAuth, Integer tokens) {
         Optional<User> userOptional = findByEmail(email);
 
         if (userOptional.isPresent()) {
@@ -70,6 +70,7 @@ public class UserService {
 
             newUser.setEmail(email);
             newUser.setUsername(username);
+            newUser.setTokens(tokens);
             newUser.setExternalAuth(isExternalAuth);
             Optional<Role> defaultRole = roleService.findRoleById(1);
             defaultRole.ifPresent(newUser::setRole);

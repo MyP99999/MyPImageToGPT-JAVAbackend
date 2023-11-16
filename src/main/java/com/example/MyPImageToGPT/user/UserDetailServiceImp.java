@@ -24,6 +24,14 @@ public class UserDetailServiceImp implements UserDetailsService {
         return UserDetailImp.build(user);
     }
 
+    @Transactional
+    public UserDetails loadUserByName(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseGet(() -> createNewUser(username));
+
+        return UserDetailImp.build(user);
+    }
+
     private User createNewUser(String email) {
         // Create a new user entity and set its properties
         User newUser = new User();

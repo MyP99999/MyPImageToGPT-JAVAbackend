@@ -23,11 +23,12 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private Integer tokens = 0; // Default value set to 0
 
     @Column(name = "is_external_auth")
     private boolean isExternalAuth;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 

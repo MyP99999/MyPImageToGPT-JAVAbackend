@@ -16,25 +16,26 @@ public class UserDetailImp implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private final int id;
+
     private final String username;
     private final String email;
     private final String password;
+    private final int tokens;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailImp(Integer id, String username, String email, String password,
-                         Collection<? extends GrantedAuthority> authorities) {
+                         int tokens, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.tokens = tokens;
         this.authorities = authorities;
     }
 
     public static UserDetailImp build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        // Assuming you have a way to get the role's name by its id,
-        // here's a simplified example:
-        String roleName = user.getRole().getName(); // Assuming getRole() returns a Role object and getName() returns the role name
+        String roleName = (user.getRole() != null) ? user.getRole().getName() : "USER";
         authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
 
         return new UserDetailImp(
@@ -42,6 +43,7 @@ public class UserDetailImp implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getTokens(),
                 authorities
         );
     }
@@ -106,5 +108,9 @@ public class UserDetailImp implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public int getTokens() {
+        return tokens;
     }
 }

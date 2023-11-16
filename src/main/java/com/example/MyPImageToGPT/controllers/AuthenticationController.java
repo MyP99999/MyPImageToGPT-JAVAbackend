@@ -3,13 +3,16 @@ package com.example.MyPImageToGPT.controllers;
 import com.example.MyPImageToGPT.auth.AuthenticationRequest;
 import com.example.MyPImageToGPT.auth.AuthenticationResponse;
 import com.example.MyPImageToGPT.auth.RegisterRequest;
+import com.example.MyPImageToGPT.jwt.JwtService;
 import com.example.MyPImageToGPT.responses.MessageResponse;
 import com.example.MyPImageToGPT.services.AuthenticationService;
+import com.example.MyPImageToGPT.user.UserDetailServiceImp;
 import com.example.MyPImageToGPT.validations.RegisterValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -21,7 +24,8 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
     private final RegisterValidation registerValidation;
-
+    private final JwtService jwtService;
+    private final UserDetailServiceImp userDetailServiceImp;
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request)
     {
@@ -63,6 +67,24 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(service.authenticate(request));
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestParam("refreshToken") String refreshToken) {
+        try {
+            String username = jwtService.extractUsername(refreshToken);
+            UserDetails userDetails = userDetailServiceImp.loadUserByName(username);
+
+            if (jwtService.isRefreshTokenValid(refreshToken, userDetails)) {
+                String newJwtToken = jwtService.generateToken(userDetails);
+                return ResponseEntity.ok(new AuthenticationResponse(newJwtToken, null, null));
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during token refresh: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/google")
     public ResponseEntity<?> authenticateWithGoogle(@RequestParam("code") String code) {
         try {
