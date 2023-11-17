@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,8 @@ public class AuthenticationService {
     private final RegisterValidation registerValidation;
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Autowired
+    private EmailService emailService;
     @Value("${google.oauth2.token-endpoint}")
     private String googleTokenEndpoint;
 
@@ -58,13 +61,25 @@ public class AuthenticationService {
         newUser.setEmail(request.getEmail());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         newUser.setPassword(encodedPassword);
+        newUser.setExternalAuth(false);
+
+        // Generate a token in the register method
+        newUser.setActivationToken(UUID.randomUUID().toString());
+        newUser.setActive(false);
 
         Optional<Role> userRole = roleService.findRoleById(1);
         userRole.ifPresent(newUser::setRole);
 
         userService.save(newUser);
-        UserDetails userDetails = userDetailServiceImp.loadUserByUsername(newUser.getUsername());
+        UserDetails userDetails = userDetailServiceImp.loadUserByUsername(newUser.getEmail());
         String jwtToken = jwtService.generateToken(userDetails);
+
+        String activationLink = "http://localhost:3000/activate?token=" + newUser.getActivationToken();
+        emailService.sendEmail(
+                newUser.getEmail(),
+                "Registration Confirmation",
+                "Thank you for registering. Please click on the below link to activate your account: " + activationLink
+        );
 
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
@@ -91,8 +106,12 @@ public class AuthenticationService {
         UserDetails userDetails = userDetailServiceImp.loadUserByUsername(user.getEmail());
 
         String jwtToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     private String exchangeCodeForAccessToken(String code) {

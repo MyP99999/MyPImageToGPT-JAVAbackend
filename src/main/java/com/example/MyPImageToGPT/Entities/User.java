@@ -23,7 +23,10 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private Integer tokens = 0; // Default value set to 0
+    private Integer tokens = 10; // Default value set to 10
+
+    private String activationToken;
+    private boolean isActive;
 
     @Column(name = "is_external_auth")
     private boolean isExternalAuth;

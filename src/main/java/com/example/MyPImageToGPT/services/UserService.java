@@ -83,4 +83,9 @@ public class UserService {
             return userRepository.save(newUser); // Save and return the new user
         }
     }
+
+    // In UserService class
+    public Optional<User> findByActivationToken(String token) {
+        return userRepository.findByActivationToken(token);
+    }
 }
