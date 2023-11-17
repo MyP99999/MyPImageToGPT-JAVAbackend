@@ -24,9 +24,16 @@ public class User {
     private String email;
     private String password;
     private Integer tokens = 10; // Default value set to 10
-
     private String activationToken;
-    private boolean isActive;
+    private boolean isActive = false;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     @Column(name = "is_external_auth")
     private boolean isExternalAuth;

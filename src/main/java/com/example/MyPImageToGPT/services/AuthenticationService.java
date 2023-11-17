@@ -89,7 +89,7 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails userDetails = userDetailServiceImp.loadUserByUsername(request.getUsername());
-
+        System.out.println(userDetails);
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
@@ -104,7 +104,12 @@ public class AuthenticationService {
         String accessToken = exchangeCodeForAccessToken(code);
         GoogleUser googleUser = fetchGoogleUserDetails(accessToken);
 
+
+        System.out.println(googleUser.getTokens()); // null
+        System.out.println(googleUser.getEmail()); // good email
+
         User user = userService.findOrCreateUser(googleUser.getEmail(),googleUser.getEmail().split("@")[0],googleUser.isExternalAuth(), googleUser.getTokens());
+
 
         UserDetails userDetails = userDetailServiceImp.loadUserByUsername(user.getEmail());
 
@@ -135,6 +140,8 @@ public class AuthenticationService {
         Map<String, Object> responseMap = responseEntity.getBody();
         return responseMap != null ? (String) responseMap.get("access_token") : null;
     }
+
+
 
     private GoogleUser fetchGoogleUserDetails(String accessToken) {
         HttpHeaders headers = new HttpHeaders();

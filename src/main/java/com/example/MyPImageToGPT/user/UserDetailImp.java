@@ -20,15 +20,17 @@ public class UserDetailImp implements UserDetails {
     private final String username;
     private final String email;
     private final String password;
-    private final int tokens;
+    private final Integer tokens;
     private final Collection<? extends GrantedAuthority> authorities;
 
     private final boolean isActive;
 
-
+    public boolean isActive() {
+        return isActive;
+    }
 
     public UserDetailImp(Integer id, String username, String email, String password,
-                         int tokens, Collection<? extends GrantedAuthority> authorities, boolean isActive) {
+                         Integer tokens, Collection<? extends GrantedAuthority> authorities, boolean isActive) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -42,7 +44,7 @@ public class UserDetailImp implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
         String roleName = (user.getRole() != null) ? user.getRole().getName() : "USER";
         authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
-        boolean isActive = user.isActive();
+
 
         return new UserDetailImp(
                 user.getId(),
@@ -51,7 +53,8 @@ public class UserDetailImp implements UserDetails {
                 user.getPassword(),
                 user.getTokens(),
                 authorities,
-                isActive);
+                user.isActive()
+                );
     }
     public String getRole() {
         return authorities.stream()

@@ -70,18 +70,27 @@ public class UserService {
 
             newUser.setEmail(email);
             newUser.setUsername(username);
-            newUser.setTokens(tokens);
+            newUser.setTokens(10);
             newUser.setExternalAuth(isExternalAuth);
             Optional<Role> defaultRole = roleService.findRoleById(1);
             defaultRole.ifPresent(newUser::setRole);
             newUser.setActive(true);
 
-            // Set other default values or values from the OAuth2 response
-            // For example, newUser.setRole(defaultRole);
-
-
 
             return userRepository.save(newUser); // Save and return the new user
+        }
+    }
+
+    public void updateTokenBalance(User user, int additionalTokens) {
+        if (user != null) {
+            int currentTokens = user.getTokens();
+            int updatedTokens = currentTokens + additionalTokens;
+            user.setTokens(updatedTokens);
+
+            userRepository.save(user);
+        } else {
+            // Handle the case where the user is not found
+            throw new IllegalStateException("User not found");
         }
     }
 
