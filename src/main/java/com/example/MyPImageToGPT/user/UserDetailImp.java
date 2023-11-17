@@ -23,20 +23,26 @@ public class UserDetailImp implements UserDetails {
     private final int tokens;
     private final Collection<? extends GrantedAuthority> authorities;
 
+    private final boolean isActive;
+
+
+
     public UserDetailImp(Integer id, String username, String email, String password,
-                         int tokens, Collection<? extends GrantedAuthority> authorities) {
+                         int tokens, Collection<? extends GrantedAuthority> authorities, boolean isActive) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.tokens = tokens;
         this.authorities = authorities;
+        this.isActive = isActive;
     }
 
     public static UserDetailImp build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         String roleName = (user.getRole() != null) ? user.getRole().getName() : "USER";
         authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
+        boolean isActive = user.isActive();
 
         return new UserDetailImp(
                 user.getId(),
@@ -44,8 +50,8 @@ public class UserDetailImp implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getTokens(),
-                authorities
-        );
+                authorities,
+                isActive);
     }
     public String getRole() {
         return authorities.stream()
@@ -86,11 +92,6 @@ public class UserDetailImp implements UserDetails {
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -112,5 +113,10 @@ public class UserDetailImp implements UserDetails {
 
     public int getTokens() {
         return tokens;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isActive;
     }
 }

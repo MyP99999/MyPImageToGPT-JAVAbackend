@@ -67,7 +67,7 @@ public class AuthenticationController {
                 // Generic authentication failure
                 return ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)
-                        .body(new MessageResponse("Error: Authentication failed."));
+                        .body(new MessageResponse("Error: The account needs to be activated to login."));
             }
         }
 

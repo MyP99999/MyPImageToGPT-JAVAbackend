@@ -74,6 +74,7 @@ public class UserService {
             newUser.setExternalAuth(isExternalAuth);
             Optional<Role> defaultRole = roleService.findRoleById(1);
             defaultRole.ifPresent(newUser::setRole);
+            newUser.setActive(true);
 
             // Set other default values or values from the OAuth2 response
             // For example, newUser.setRole(defaultRole);
