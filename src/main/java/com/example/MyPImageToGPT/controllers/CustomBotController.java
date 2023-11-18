@@ -45,7 +45,9 @@ public class CustomBotController {
             Optional<User> userOptional = userService.findById(userId);
             if(userOptional.isPresent()){
                 User user = userOptional.get();
-                historyService.saveHistory(user.getId(), prompt, answer);
+                Integer price = 5;
+                userService.substractTokenBalance(user, price);
+                historyService.saveHistory(user.getId(), prompt, answer, price);
             }
 
             return answer;

@@ -94,6 +94,19 @@ public class UserService {
         }
     }
 
+    public void substractTokenBalance(User user, int additionalTokens) {
+        if (user != null) {
+            int currentTokens = user.getTokens();
+            int updatedTokens = currentTokens - additionalTokens;
+            user.setTokens(updatedTokens);
+
+            userRepository.save(user);
+        } else {
+            // Handle the case where the user is not found
+            throw new IllegalStateException("User not found");
+        }
+    }
+
     // In UserService class
     public Optional<User> findByActivationToken(String token) {
         return userRepository.findByActivationToken(token);

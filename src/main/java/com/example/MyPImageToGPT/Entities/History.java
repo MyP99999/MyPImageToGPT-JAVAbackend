@@ -26,6 +26,8 @@ public class History {
     private String question;
     private String answer;
 
+    private Integer tokens;
+
     private LocalDateTime timestamp;
 
     @PrePersist

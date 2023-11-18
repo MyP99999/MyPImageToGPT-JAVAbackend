@@ -27,7 +27,7 @@ public class HistoryService {
     public List<History> findAll() {
         return (List<History>) historyRepository.findAll();
     }
-    public void saveHistory(Integer userId, String question, String answer) {
+    public void saveHistory(Integer userId, String question, String answer, Integer tokens) {
         Optional<User> userOptional = userService.findById(userId);
 
         if(userOptional.isPresent()){
@@ -35,6 +35,7 @@ public class HistoryService {
             history.setUser(userOptional.get());
             history.setQuestion(question);
             history.setAnswer(answer);
+            history.setTokens(tokens);
             history.setTimestamp(LocalDateTime.now());
             historyRepository.save(history);
         } else {
