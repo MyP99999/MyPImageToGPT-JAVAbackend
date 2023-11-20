@@ -86,18 +86,20 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails userDetails = userDetailServiceImp.loadUserByUsername(request.getUsername());
-        System.out.println(userDetails);
-        String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
+        try {
+            UserDetails userDetails = userDetailServiceImp.loadUserByUsername(request.getUsername());
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
+            String jwtToken = jwtService.generateToken(userDetails);
+            String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException("User with username " + request.getUsername() + " does not exist.");
+        }
     }
 
     public AuthenticationResponse authenticateWithGoogle(String code) {
@@ -111,7 +113,7 @@ public class AuthenticationService {
         User user = userService.findOrCreateUser(googleUser.getEmail(),googleUser.getEmail().split("@")[0],googleUser.isExternalAuth(), googleUser.getTokens());
 
 
-        UserDetails userDetails = userDetailServiceImp.loadUserByUsername(user.getEmail());
+        UserDetails userDetails = userDetailServiceImp.loadUserByUsernameGoogle(user.getEmail());
 
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);

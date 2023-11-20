@@ -19,6 +19,14 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return UserDetailImp.build(user);
+    }
+
+    @Transactional
+    public UserDetails loadUserByUsernameGoogle(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(email));
 
         return UserDetailImp.build(user);

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -52,28 +53,27 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
         try {
-            service.authenticate(request);
+            return ResponseEntity.ok(service.authenticate(request));
+        } catch (UsernameNotFoundException e) {
+            // User not found
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new MessageResponse("Error: No user found with the provided email."));
+        } catch (BadCredentialsException e) {
+            // Invalid username or password
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Invalid email or password!"));
         } catch (AuthenticationException e) {
-            if (e instanceof BadCredentialsException) {
-                // Invalid username or password
-                return ResponseEntity
-                        .badRequest()
-                        .body(new MessageResponse("Error: Invalid email or password!"));
-
-            } else {
-                // Generic authentication failure
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .body(new MessageResponse("Error: The account needs to be activated to login."));
-            }
+            // Generic authentication failure
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponse("Error: The account needs to be activated to login."));
         }
-
-        return ResponseEntity.ok(service.authenticate(request));
     }
+
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestParam("refreshToken") String refreshToken) {
