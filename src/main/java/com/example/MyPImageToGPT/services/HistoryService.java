@@ -24,6 +24,17 @@ public class HistoryService {
         return historyRepository.findByUserId(userId);
     }
 
+    public History getHistoryById(Integer userId, Integer historyID) {
+        // Fetch the history item for the specific user and history ID
+        Optional<History> history = historyRepository.findByUserIdAndId(userId, historyID);
+
+        if (history.isPresent()) {
+            return history.get();
+        } else {
+            throw new RuntimeException("History item not found for user " + userId + " with ID " + historyID);
+        }
+    }
+
     public List<History> findAll() {
         return (List<History>) historyRepository.findAll();
     }
