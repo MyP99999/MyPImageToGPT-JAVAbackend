@@ -34,7 +34,7 @@ public class CustomBotController {
     private HistoryService historyService;
 
     @GetMapping("/chat")
-    public String chat(@RequestParam("prompt") String prompt, @RequestParam("userId") Integer userId){
+    public String chat(@RequestParam("prompt") String prompt, @RequestParam("userId") Integer userId, @RequestParam("price") Integer price){
         ChatGPTRequest request = new ChatGPTRequest(model, prompt);
         ChatGptResponse chatGptResponse = template.postForObject(apiURL, request, ChatGptResponse.class);
 
@@ -45,7 +45,7 @@ public class CustomBotController {
             Optional<User> userOptional = userService.findById(userId);
             if(userOptional.isPresent()){
                 User user = userOptional.get();
-                Integer price = 5;
+//                Integer price = 5;
                 userService.substractTokenBalance(user, price);
                 historyService.saveHistory(user.getId(), prompt, answer, price);
             }
