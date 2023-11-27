@@ -18,8 +18,8 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:3000")
 public class CustomBotController {
 
-    @Value("${openai.model}")
-    private String model;
+//    @Value("${openai.model}")
+//    private String model;
 
     @Value(("${openai.api.url}"))
     private String apiURL;
@@ -34,7 +34,7 @@ public class CustomBotController {
     private HistoryService historyService;
 
     @GetMapping("/chat")
-    public String chat(@RequestParam("prompt") String prompt, @RequestParam("userId") Integer userId, @RequestParam("price") Integer price){
+    public String chat(@RequestParam("prompt") String prompt, @RequestParam("userId") Integer userId, @RequestParam("price") Integer price, @RequestParam String model){
         ChatGPTRequest request = new ChatGPTRequest(model, prompt);
         ChatGptResponse chatGptResponse = template.postForObject(apiURL, request, ChatGptResponse.class);
 
