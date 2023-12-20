@@ -35,6 +35,9 @@ public class User {
         isActive = active;
     }
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     @Column(name = "is_external_auth")
     private boolean isExternalAuth;
 

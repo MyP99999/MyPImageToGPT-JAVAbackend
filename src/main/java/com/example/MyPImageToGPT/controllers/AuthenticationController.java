@@ -91,11 +91,23 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during token refresh: " + e.getMessage());
         }
     }
-
     @PostMapping("/google")
     public ResponseEntity<?> authenticateWithGoogle(@RequestParam("code") String code) {
         try {
             AuthenticationResponse response = service.authenticateWithGoogle(code);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Handle exceptions (like failed token exchange, user creation, etc.)
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error during Google authentication: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/googleNative")
+    public ResponseEntity<?> authenticateWithGoogleNative(@RequestParam("code") String code) {
+        try {
+            AuthenticationResponse response = service.authenticateWithGoogleNative(code);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             // Handle exceptions (like failed token exchange, user creation, etc.)
@@ -118,5 +130,16 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid activation token");
         }
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        try {
+            service.forgotPassword(email);
+            return ResponseEntity.ok(new MessageResponse("Password reset email sent successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during password reset: " + e.getMessage());
+        }
+    }
+
 
 }

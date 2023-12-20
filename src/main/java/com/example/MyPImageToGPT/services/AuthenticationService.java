@@ -102,26 +102,84 @@ public class AuthenticationService {
         }
     }
 
+    public void forgotPassword(String email) {
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        userService.save(user);
+
+        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+        emailService.sendEmail(
+                email,
+                "Password Reset Request",
+                "To reset your password, click the link below:\n" + resetLink
+        );
+    }
+
+
     public AuthenticationResponse authenticateWithGoogle(String code) {
-        String accessToken = exchangeCodeForAccessToken(code);
-        GoogleUser googleUser = fetchGoogleUserDetails(accessToken);
+        try {
+            String accessToken = exchangeCodeForAccessToken(code);
+
+            if (accessToken == null || accessToken.isEmpty()) {
+                System.out.println("Failed to exchange code for access token.");
+                // Handle the error appropriately
+                return null; // Or throw an exception
+            }
 
 
-        System.out.println(googleUser.getTokens()); // null
-        System.out.println(googleUser.getEmail()); // good email
+            GoogleUser googleUser = fetchGoogleUserDetails(accessToken);
 
-        User user = userService.findOrCreateUser(googleUser.getEmail(),googleUser.getEmail().split("@")[0],googleUser.isExternalAuth(), googleUser.getTokens());
+            User user = userService.findOrCreateUser(googleUser.getEmail(), googleUser.getEmail().split("@")[0], googleUser.isExternalAuth(), googleUser.getTokens());
 
+            UserDetails userDetails = userDetailServiceImp.loadUserByUsernameGoogle(user.getEmail());
 
-        UserDetails userDetails = userDetailServiceImp.loadUserByUsernameGoogle(user.getEmail());
+            String jwtToken = jwtService.generateToken(userDetails);
+            String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("Error during authentication: " + e.getMessage());
+            e.printStackTrace();
+            // Handle the error appropriately
+            return null; // Or throw a custom exception
+        }
+    }
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+    public AuthenticationResponse authenticateWithGoogleNative(String code) {
+        try {
+            String accessToken = code;
+
+            if (accessToken == null || accessToken.isEmpty()) {
+                System.out.println("Failed to exchange code for access token.");
+                // Handle the error appropriately
+                return null; // Or throw an exception
+            }
+
+            GoogleUser googleUser = fetchGoogleUserDetails(accessToken);
+
+            User user = userService.findOrCreateUser(googleUser.getEmail(), googleUser.getEmail().split("@")[0], googleUser.isExternalAuth(), googleUser.getTokens());
+
+            UserDetails userDetails = userDetailServiceImp.loadUserByUsernameGoogle(user.getEmail());
+
+            String jwtToken = jwtService.generateToken(userDetails);
+            String refreshToken = jwtService.generateRefreshToken(userDetails);
+
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("Error during authentication: " + e.getMessage());
+            e.printStackTrace();
+            // Handle the error appropriately
+            return null; // Or throw a custom exception
+        }
     }
 
     private String exchangeCodeForAccessToken(String code) {
@@ -129,10 +187,11 @@ public class AuthenticationService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
         params.add("grant_type", "authorization_code");
+        params.add("access_type", "offline");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
@@ -147,15 +206,10 @@ public class AuthenticationService {
 
     private GoogleUser fetchGoogleUserDetails(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-
         headers.setBearerAuth(accessToken);
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-
-
         ResponseEntity<GoogleUser> response = restTemplate.exchange(googleUserinfoEndpoint, HttpMethod.GET, entity, GoogleUser.class);
-
         return response.getBody();
     }
 
