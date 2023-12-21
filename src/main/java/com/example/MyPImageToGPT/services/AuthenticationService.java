@@ -106,6 +106,11 @@ public class AuthenticationService {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        // Check if the account is authenticated externally
+        if (user.isExternalAuth()) {
+            throw new IllegalStateException("Password reset is not available for externally authenticated accounts.");
+        }
+
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
         userService.save(user);

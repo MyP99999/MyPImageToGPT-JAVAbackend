@@ -40,6 +40,13 @@ public class User {
 
     @Column(name = "is_external_auth")
     private boolean isExternalAuth;
+    public boolean isExternalAuth() {
+        return isExternalAuth;
+    }
+
+    public void setExternalAuth(boolean externalAuth) {
+        isExternalAuth = externalAuth;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
