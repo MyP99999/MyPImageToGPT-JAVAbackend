@@ -4,6 +4,7 @@ import com.example.MyPImageToGPT.Entities.User;
 import com.example.MyPImageToGPT.auth.AuthenticationRequest;
 import com.example.MyPImageToGPT.auth.AuthenticationResponse;
 import com.example.MyPImageToGPT.auth.RegisterRequest;
+import com.example.MyPImageToGPT.dto.PasswordResetRequest;
 import com.example.MyPImageToGPT.jwt.JwtService;
 import com.example.MyPImageToGPT.responses.MessageResponse;
 import com.example.MyPImageToGPT.services.AuthenticationService;
@@ -141,5 +142,14 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        try {
+            service.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok(new MessageResponse("Password reset successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during password reset: " + e.getMessage());
+        }
+    }
 
 }

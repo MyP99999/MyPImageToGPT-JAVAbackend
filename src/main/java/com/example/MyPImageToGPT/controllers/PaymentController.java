@@ -38,7 +38,7 @@ public class PaymentController {
                 .setCurrency("ron")
                 .addPaymentMethodType("card")
                 .build();
-
+        System.out.println(paymentRequest);
         try {
             PaymentIntent intent = PaymentIntent.create(params);
 

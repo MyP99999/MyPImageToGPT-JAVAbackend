@@ -118,6 +118,16 @@ public class AuthenticationService {
         );
     }
 
+    public void resetPassword(String token, String newPassword) {
+        User user = userService.findByResetToken(token)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid reset token"));
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        user.setResetToken(null); // Clear the reset token after successful password reset
+        userService.save(user);
+    }
+
 
     public AuthenticationResponse authenticateWithGoogle(String code) {
         try {

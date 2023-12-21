@@ -59,6 +59,11 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findByResetToken(String resetToken) {
+        return userRepository.findByResetToken(resetToken);
+    }
+
+
     public User findOrCreateUser(String email, String username, Boolean isExternalAuth, Integer tokens) {
         Optional<User> userOptional = findByEmail(email);
 
