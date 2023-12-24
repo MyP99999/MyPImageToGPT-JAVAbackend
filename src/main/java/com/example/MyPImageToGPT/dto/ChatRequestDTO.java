@@ -1,6 +1,5 @@
 package com.example.MyPImageToGPT.dto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
-    private String role;
-    private List<Object> content;
+public class ChatRequestDTO {
+    private String prompt;
+    private Integer userId;
+    private Integer price;
+    private String imageData;
+    private String model;
 }

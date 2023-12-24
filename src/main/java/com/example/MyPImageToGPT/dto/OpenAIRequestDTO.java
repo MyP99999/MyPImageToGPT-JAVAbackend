@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
-    private String role;
-    private List<Object> content;
+public class OpenAIRequestDTO {
+    private String model;
+    private List<Message> messages;
+    private int max_tokens;
 }
