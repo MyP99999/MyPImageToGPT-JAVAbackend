@@ -43,7 +43,7 @@ public class CustomBotController {
         if (!"gpt-4-vision-preview".equals(chatRequestDTO.getModel()) && chatRequestDTO.getImageData() != null && !chatRequestDTO.getImageData().isEmpty()) {
             chatRequestDTO.setModel("gpt-4-vision-preview");
         }
-        
+
         if (chatRequestDTO.getImageData() != null && !chatRequestDTO.getImageData().isEmpty()) {
             ImageUrl imageUrl = new ImageUrl(chatRequestDTO.getImageData());
             contentItems.add(new ImageUrlContentItem("image_url", imageUrl));

@@ -136,7 +136,10 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticateWithGoogle(String code) {
         try {
+            System.out.println(code);
+
             String accessToken = exchangeCodeForAccessToken(code);
+            System.out.println(accessToken);
 
             if (accessToken == null || accessToken.isEmpty()) {
                 System.out.println("Failed to exchange code for access token.");
@@ -206,12 +209,16 @@ public class AuthenticationService {
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("grant_type", "authorization_code");
+        params.add("redirect_uri", redirectUri);
         params.add("access_type", "offline");
         params.add("code", code);
+        System.out.println("params");
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+        System.out.println("headers");
 
         ResponseEntity<Map> responseEntity = restTemplate.postForEntity(googleTokenEndpoint, requestEntity, Map.class);
+        System.out.println(responseEntity);
 
         Map<String, Object> responseMap = responseEntity.getBody();
         return responseMap != null ? (String) responseMap.get("access_token") : null;

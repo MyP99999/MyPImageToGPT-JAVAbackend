@@ -49,23 +49,9 @@ public class PaymentController {
                 int tokensToAdd = calculateTokens(paymentRequest.getAmount());
                 userService.updateTokenBalance(user, tokensToAdd);
 
-//                // Generate new JWT token with updated user details
-//                Map<String, Object> extraClaims = new HashMap<>();
-//                extraClaims.put("id", user.getId());
-//                extraClaims.put("email", user.getEmail());
-//                String roleName = (user.getRole() != null) ? user.getRole().getName() : "USER";
-//                extraClaims.put("role", roleName);
-//                extraClaims.put("tokens", user.getTokens());
-//                // Add other user-related claims as needed
-//
-//                // Generate new JWT token
-//                String newJwtToken = jwtService.generateToken(extraClaims, UserDetailImp.build(user));
 
-
-                // Create a response object with both client secret and new JWT token
                 var response = new Object() {
                     public final String clientSecret = intent.getClientSecret();
-//                    public final String newToken = newJwtToken;
                 };
                 return ResponseEntity.ok(response);
             } else {
