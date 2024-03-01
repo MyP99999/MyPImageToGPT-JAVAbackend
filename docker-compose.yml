@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_DATABASE: 'mypimagetogpt'
+#      MYSQL_USER: 'root'
+#      MYSQL_PASSWORD: 'admin'
+    ports:
+      - "3366:3306"
+  backend:
+    build:
+      context: .
+    container_name: backend
+    restart: on-failure
+    ports:
+      - '7001:7000'
+    depends_on:
+      - db
+    links:
+      - db
